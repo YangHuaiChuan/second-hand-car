@@ -47,7 +47,7 @@ def get_car_links_from_che168():
     driver = start_browser_with_proxy(proxy, Config.proxy_username, Config.proxy_password)
     print(f"使用代理：{proxy}")
 
-    url = 'https://www.che168.com/china/list/?pvareaid=100945'
+    url = 'https://www.che168.com/namenggu/neimenggu/list/?pvareaid=100943'
     driver.get(url)
 
     car_links = []

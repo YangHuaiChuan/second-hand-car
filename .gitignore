@@ -1,0 +1,11 @@
+# 排除 Python 虚拟环境目录
+venv/
+env/
+*.env
+__pycache__/
+*.pyc
+*.pyo
+
+# 排除所有的 .pytest_cache 和 .coverage 文件
+*.coverage
+*.pytest_cache

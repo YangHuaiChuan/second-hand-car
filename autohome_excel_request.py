@@ -4,7 +4,8 @@ import pandas as pd
 import random
 import time
 import traceback
-from fake_useragent import UserAgent
+# from fake_useragent import UserAgent
+from user_agent import generate_user_agent
 import re
 from config import Config
 from concurrent.futures import ThreadPoolExecutor
@@ -27,21 +28,21 @@ PROVINCES = {
     # "江西": "https://www.che168.com/jiangxi/list/?pvareaid=100943",
     # "辽宁": "https://www.che168.com/liaoning/list/?pvareaid=100943",
     # "山东": "https://www.che168.com/shandong/list/?pvareaid=100943",
-    "黑龙江": "https://www.che168.com/heilongjiang/list/?pvareaid=100943",
-    "内蒙古": "https://www.che168.com/neimenggu/list/?pvareaid=100943",
-    "宁夏": "https://www.che168.com/ningxia/list/?pvareaid=100943",
-    "青海": "https://www.che168.com/qinghai/list/?pvareaid=100943",
-    "上海": "https://www.che168.com/shanghai/list/?pvareaid=100943",
-    "云南": "https://www.che168.com/yunnan/list/?pvareaid=100943",
-    "重庆": "https://www.che168.com/chongqing/list/?pvareaid=100943",
-    "新疆": "https://www.che168.com/xinjiang/list/?pvareaid=100943",
-    "西藏": "https://www.che168.com/xizang/list/?pvareaid=100943",
-    "山西": "https://www.che168.com/shanxi/list/?pvareaid=100943",
-    "陕西": "https://www.che168.com/shan_xi/list/?pvareaid=100943",
-    "北京": "https://www.che168.com/beijing/list/?pvareaid=100943",
-    "四川": "https://www.che168.com/sichuan/list/?pvareaid=100943",
-    "天津": "https://www.che168.com/tianjin/list/?pvareaid=100943",
-    "浙江": "https://www.che168.com/zhejiang/list/?pvareaid=100943"
+    # "黑龙江": "https://www.che168.com/heilongjiang/list/?pvareaid=100943",
+    "内蒙古": "https://www.che168.com/namenggu/neimenggu/list/?pvareaid=100943"
+    # "宁夏": "https://www.che168.com/ningxia/list/?pvareaid=100943",
+    # "青海": "https://www.che168.com/qinghai/list/?pvareaid=100943",
+    # "上海": "https://www.che168.com/shanghai/list/?pvareaid=100943",
+    # "云南": "https://www.che168.com/yunnan/list/?pvareaid=100943",
+    # "重庆": "https://www.che168.com/chongqing/list/?pvareaid=100943",
+    # "新疆": "https://www.che168.com/xinjiang/list/?pvareaid=100943",
+    # "西藏": "https://www.che168.com/xizang/list/?pvareaid=100943",
+    # "山西": "https://www.che168.com/shanxi/list/?pvareaid=100943",
+    # "陕西": "https://www.che168.com/shan_xi/list/?pvareaid=100943",
+    # "北京": "https://www.che168.com/beijing/list/?pvareaid=100943",
+    # "四川": "https://www.che168.com/sichuan/list/?pvareaid=100943",
+    # "天津": "https://www.che168.com/tianjin/list/?pvareaid=100943",
+    # "浙江": "https://www.che168.com/zhejiang/list/?pvareaid=100943"
 }
 
 # 获取代理配置
@@ -52,11 +53,17 @@ def get_proxies():
     }
 
 # 获取请求头
+# def get_headers():
+#     return {
+#         'User-Agent': UserAgent().random,
+#         'Referer': 'https://www.che168.com'
+#     }
 def get_headers():
     return {
-        'User-Agent': UserAgent().random,
+        'User-Agent': generate_user_agent(),
         'Referer': 'https://www.che168.com'
     }
+
 
 # 获取单个页面的车辆链接
 def get_car_links_from_page(base_url, page_num):
