@@ -1,4 +1,4 @@
-# 处理规则：处理每张表时，去掉新车价格为0万的，并且现价和新车价格字段名带上单位万，字段值去掉万；
+# 处理规则：处理每张表时，现价和新车价格字段名带上单位万，字段值去掉万；
 # 表显里程字段名加上单位公里，字段内容去掉公里；排量字段名加上L，字段内容去掉L；上
 # 牌时间修改格式为xxxx-xx；过户次数只显示数值，比如0，1等；
 # 发动机的字段内容按照空格拆分，要第二个和第三个元素，第二个如190马力变为新的字段名为马力，数值为190，第三个元素仍然属于发动机，如L4，第一个元素如2.5L不要；
@@ -7,6 +7,8 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import regexp_replace, split, col, when, trim
 import os
+
+os.environ["PYSPARK_PYTHON"] = "G:/课程报告或作业/大数据实训/second-hand-car/carvenv/Scripts/python.exe"
 
 # 初始化 Spark 会话
 spark = SparkSession.builder \
@@ -19,7 +21,7 @@ file_list = [f for f in os.listdir(folder_path) if f.endswith(".xlsx")]
 merged_df = None
 
 for file_name in file_list:
-    province = file_name.split("_")[3]
+    province = file_name.split("_")[2]
     file_path = os.path.join(folder_path, file_name)
     
     # 用 pandas 读 Excel，然后转成 Spark DF（PySpark 原生不支持 xlsx）
@@ -27,9 +29,6 @@ for file_name in file_list:
     pdf = pd.read_excel(file_path)
     pdf['省份'] = province
     sdf = spark.createDataFrame(pdf)
-    
-    # 去掉新车价格为“0万”
-    sdf = sdf.filter(~col("新车价格").contains("0万"))
 
     # 清洗字段内容（去单位）
     sdf = sdf.withColumn("现价（万）", regexp_replace("现价", "万", "")) \
