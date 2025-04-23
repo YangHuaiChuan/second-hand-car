@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./gen-py/hbase"
+    ]
+}

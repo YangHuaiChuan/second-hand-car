@@ -1,0 +1,177 @@
+#!/home/yanghc/usr/second-hand-car/carvenv/bin/python3.8
+import sys
+import pprint
+
+from pyhbase.connection import HBaseConnection
+
+# TODO(hammer): Use optparse or python-gflags here
+if __name__=="__main__":
+  def usage():
+    print """
+  Usage: %s [-h host[:port]] command [arg1 [arg2...]]
+
+  Commands:
+
+      Cluster metadata:
+        get_hbase_version
+        get_cluster_status
+        list_tables
+
+      Table metadata:
+        describe_table table
+        is_table_enabled table
+        table_exists table
+
+      Family metadata:
+        describe_family table family
+
+      Table admin:
+        create_table table [family1 [family2 ...]]
+        drop table
+        truncate table
+        enable_table table
+        disable_table table
+        flush table
+        split table
+        alter table (add|delete) family
+
+      Single Row DML:
+        get table row [family1[:qualifier1] [family2[:qualifier2] ...]]
+        exists table row [family1[:qualifier1] [family2[:qualifier2] ...]]
+        put table row family1:qualifier1 value1 [family2:qualifier2 value2 ...]
+        incr table row family:qualifier [amount]
+        delete table row [family1[:qualifier1] [family2[:qualifier2] ...]]
+      
+      Multi-Row DML:
+        scan table number_of_rows
+  """ % sys.argv[0]
+
+  if len(sys.argv) <= 1 or sys.argv[1] == '--help':
+    usage()
+    sys.exit(0)
+
+  host = 'localhost'
+  port = 9090
+  argi = 1
+
+  if sys.argv[argi] == '-h':
+    parts = sys.argv[argi+1].split(':')
+    host = parts[0]
+    if len(parts) == 2:
+      port = int(parts[1])
+    argi += 2
+
+  cmd = sys.argv[argi]
+  args = sys.argv[argi+1:]
+
+  connection = HBaseConnection(host, port)
+
+  if cmd == 'list_tables':
+    if len(args) != 0:
+      usage()
+      sys.exit(1)
+    print connection.list_tables(*args)
+  elif cmd == 'get_hbase_version':
+    if len(args) != 0:
+      usage()
+      sys.exit(1)
+    print connection.get_hbase_version(*args)
+  elif cmd == 'get_cluster_status':
+    if len(args) != 0:
+      usage()
+      sys.exit(1)
+    pprint.pprint(connection.get_cluster_status(*args))
+  elif cmd == 'describe_table':
+    if len(args) != 1:
+      usage()
+      sys.exit(1)
+    print connection.describe_table(*args)
+  elif cmd == 'describe_family':
+    if len(args) != 2:
+      usage()
+      sys.exit(1)
+    print connection.describe_family(*args)
+  elif cmd == 'is_table_enabled':
+    if len(args) != 1:
+      usage()
+      sys.exit(1)
+    print connection.is_table_enabled(*args)
+  elif cmd == 'table_exists':
+    if len(args) != 1:
+      usage()
+      sys.exit(1)
+    print connection.table_exists(*args)
+  elif cmd == 'create_table':
+    if len(args) < 1:
+      usage()
+      sys.exit(1)
+    print connection.create_table(*args)
+  elif cmd == 'alter':
+    if len(args) != 3:
+      usage()
+      sys.exit(1)
+    print connection.alter(*args)
+  elif cmd == 'drop':
+    if len(args) != 1:
+      usage()
+      sys.exit(1)
+    print connection.drop(*args)
+  elif cmd == 'truncate':
+    if len(args) != 1:
+      usage()
+      sys.exit(1)
+    print connection.truncate(*args)
+  elif cmd == 'enable_table':
+    if len(args) != 1:
+      usage()
+      sys.exit(1)
+    print connection.enable_table(*args)
+  elif cmd == 'disable_table':
+    if len(args) != 1:
+      usage()
+      sys.exit(1)
+    print connection.disable_table(*args)
+  elif cmd == 'flush':
+    if len(args) != 1:
+      usage()
+      sys.exit(1)
+    print connection.flush(*args)
+  elif cmd == 'split':
+    if len(args) != 1:
+      usage()
+      sys.exit(1)
+    print connection.split(*args)
+  elif cmd == 'get':
+    if len(args) < 2:
+      usage()
+      sys.exit(1)
+    print connection.get(*args)
+  elif cmd == 'exists':
+    if len(args) < 2:
+      usage()
+      sys.exit(1)
+    print connection.exists(*args)
+  elif cmd == 'put':
+    if len(args) < 4 or not len(args) % 2 == 0:
+      usage()
+      sys.exit(1)
+    print connection.put(*args)
+  elif cmd == 'incr':
+    if len(args) not in [3, 4]:
+      usage()
+      sys.exit(1)
+    print connection.incr(*args)
+  elif cmd == 'scan':
+    if len(args) != 2:
+      usage()
+      sys.exit(1)
+    print connection.scan(*args)
+  elif cmd == 'delete':
+    if len(args) < 2:
+      usage()
+      sys.exit(1)
+    print connection.delete(*args)
+  else:
+    usage()
+    sys.exit(1)
+
